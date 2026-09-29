@@ -5,9 +5,9 @@ import NotFound from '@/pages/not-found';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import {
-  ArrowUpRight, Bot, Brain, CalendarCheck, CalendarDays, Check, CheckCircle2,
+  ArrowUpRight, Brain, CalendarCheck, CalendarDays, Check, CheckCircle2,
   ChevronRight, CircleHelp, Clock3, Coffee, Flame, ListChecks, ListTodo, Menu,
-  MessageCircle, Pause, Play, Plus, RotateCcw, Send, Settings2, Sparkles,
+  Pause, Play, Plus, RotateCcw, Send, Settings2, Sparkles,
   StickyNote, Sun, Timer, Trash2, X, Zap,
 } from 'lucide-react';
 import { Route, Switch, useLocation, Router as WouterRouter } from 'wouter';
@@ -70,6 +70,31 @@ const navItems = [
   { path: '/focus', label: 'Focus', icon: <Timer size={18} /> },
   { path: '/notes', label: 'Notes', icon: <StickyNote size={18} /> },
 ];
+
+function LuminaAvatar({ size = 64, className = '' }: { size?: number; className?: string }) {
+  return (
+    <span
+      className={`lumina-avatar ${className}`}
+      style={{ width: size, height: size }}
+      role="img"
+      aria-label="Lumina AI avatar"
+    >
+      <svg viewBox="0 0 120 120" aria-hidden="true">
+        <circle cx="60" cy="60" r="60" fill="hsl(var(--accent))" />
+        <path d="M24 103c6-20 21-31 36-31s30 11 36 31" fill="hsl(var(--sidebar))" />
+        <path d="M31 56c0-28 12-42 29-42 20 0 31 16 29 43-7-7-12-17-15-28-10 10-24 17-43 17v10Z" fill="hsl(var(--sidebar))" />
+        <path d="M38 57c0-13 9-23 22-23s22 10 22 23v12c0 13-9 23-22 23S38 82 38 69V57Z" fill="hsl(var(--card))" />
+        <path d="M37 56c5-19 14-25 27-25 10 0 17 5 22 14-12 4-25 5-39 2-2 4-5 7-10 9Z" fill="hsl(var(--sidebar))" />
+        <circle cx="51" cy="62" r="2.5" fill="hsl(var(--foreground))" />
+        <circle cx="69" cy="62" r="2.5" fill="hsl(var(--foreground))" />
+        <path d="M57 72c2 2 4 2 6 0" fill="none" stroke="hsl(var(--primary))" strokeLinecap="round" strokeWidth="2.5" />
+        <path d="M39 53c4-4 8-5 13-4M68 49c5-1 9 0 13 4" fill="none" stroke="hsl(var(--sidebar))" strokeLinecap="round" strokeWidth="2.5" />
+        <circle cx="90" cy="24" r="10" fill="hsl(var(--card))" opacity=".95" />
+        <path d="m90 18 1.6 4.4L96 24l-4.4 1.6L90 30l-1.6-4.4L84 24l4.4-1.6L90 18Z" fill="hsl(var(--primary))" />
+      </svg>
+    </span>
+  );
+}
 
 function AppShell() {
   const [location, setLocation] = useLocation();
@@ -166,23 +191,23 @@ function AppShell() {
             <div className="md:hidden"><span className="font-serif text-xl">lumina</span></div>
             <div className="hidden items-center gap-2 text-sm text-muted-foreground md:flex"><span className="size-2 rounded-full bg-accent" />Your personal daily space</div>
           </div>
-          <button data-testid="button-open-chat-header" onClick={() => setChatOpen(true)} className="flex min-h-10 items-center gap-2 rounded-full border border-border bg-card px-3 text-sm font-medium shadow-sm transition hover:border-primary/50"><span className="grid size-6 place-items-center rounded-full bg-accent/30 text-primary"><Bot size={14} /></span><span className="hidden sm:inline">Ask Lumina</span><span className="text-muted-foreground">⌘K</span></button>
+          <button data-testid="button-open-chat-header" onClick={() => setChatOpen(true)} className="flex min-h-10 items-center gap-2 rounded-full border border-border bg-card px-3 text-sm font-medium shadow-sm transition hover:border-primary/50"><LuminaAvatar size={26} /><span className="hidden sm:inline">Ask Lumina</span><span className="text-muted-foreground">⌘K</span></button>
         </header>
         {mobileMenu && <div className="fixed inset-x-0 top-[72px] z-30 border-b border-border bg-sidebar p-3 text-sidebar-foreground md:hidden">{navItems.map(item => <button key={item.path} data-testid={`mobile-nav-${item.label.toLowerCase()}`} onClick={() => { setLocation(item.path); setMobileMenu(false); }} className="flex min-h-12 w-full items-center gap-3 rounded-xl px-4 text-sm">{item.icon}{item.label}</button>)}<button data-testid="mobile-nav-settings" onClick={() => { setLocation('/settings'); setMobileMenu(false); }} className="flex min-h-12 w-full items-center gap-3 rounded-xl px-4 text-sm"><Settings2 size={18} />Settings</button></div>}
         <main className="mx-auto w-full max-w-[1440px] flex-1 px-5 py-8 md:px-10 md:py-11">
           <Switch>
-            <Route path="/" component={() => <Dashboard state={state} setLocation={setLocation} toggleTask={toggleTask} />} />
+            <Route path="/" component={() => <Dashboard state={state} setLocation={setLocation} toggleTask={toggleTask} onOpenChat={() => setChatOpen(true)} />} />
             <Route path="/tasks" component={() => <TasksPage tasks={state.tasks} addTask={addTask} toggleTask={toggleTask} deleteTask={deleteTask} />} />
             <Route path="/habits" component={() => <HabitsPage habits={state.habits} addHabit={addHabit} toggleHabit={toggleHabit} deleteHabit={deleteHabit} />} />
             <Route path="/focus" component={() => <FocusPage focusMinutes={state.focusMinutes} onComplete={completeFocus} request={focusRequest} />} />
             <Route path="/notes" component={() => <NotesPage note={state.note} updateNote={note => updateState({ note })} />} />
             <Route path="/settings" component={() => <SettingsPage onReset={() => setState(emptyState())} />} />
-            <Route component={() => <Dashboard state={state} setLocation={setLocation} toggleTask={toggleTask} />} />
+            <Route component={() => <Dashboard state={state} setLocation={setLocation} toggleTask={toggleTask} onOpenChat={() => setChatOpen(true)} />} />
           </Switch>
         </main>
       </div>
       <ChatPanel open={chatOpen} messages={chatMessages} onClose={() => setChatOpen(false)} onSend={replyToChat} />
-      {!chatOpen && <button data-testid="button-open-chat" onClick={() => setChatOpen(true)} className="fixed bottom-5 right-5 z-40 flex size-14 items-center justify-center rounded-2xl bg-sidebar text-accent shadow-xl shadow-sidebar/20 transition hover:-translate-y-1 md:bottom-8 md:right-8" aria-label="Open Lumina chat"><MessageCircle size={23} /></button>}
+      {!chatOpen && <button data-testid="button-open-chat" onClick={() => setChatOpen(true)} className="fixed bottom-5 right-5 z-40 grid size-14 place-items-center rounded-2xl bg-sidebar p-1.5 shadow-xl shadow-sidebar/20 transition hover:-translate-y-1 md:bottom-8 md:right-8" aria-label="Open Lumina chat"><LuminaAvatar size={44} className="lumina-avatar-float" /></button>}
     </div>
   );
 }
@@ -191,13 +216,25 @@ function PageHeading({ eyebrow, title, description, action }: { eyebrow: string;
   return <div className="mb-8 flex flex-col justify-between gap-5 sm:flex-row sm:items-end"><div><div className="mb-3 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[.24em] text-primary"><span className="size-1.5 rounded-full bg-accent" />{eyebrow}</div><h1 className="font-serif text-4xl tracking-tight md:text-5xl">{title}</h1><p className="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground">{description}</p></div>{action}</div>;
 }
 
-function Dashboard({ state, setLocation, toggleTask }: { state: AppState; setLocation: (path: string) => void; toggleTask: (id: string) => void }) {
+function Dashboard({ state, setLocation, toggleTask, onOpenChat }: { state: AppState; setLocation: (path: string) => void; toggleTask: (id: string) => void; onOpenChat: () => void }) {
   const total = state.tasks.length + state.habits.length;
   const done = state.tasks.filter(t => t.completed).length + state.habits.filter(h => h.completedDates.includes(todayKey())).length;
   const progress = total ? Math.round(done / total * 100) : 0;
   const activeTasks = state.tasks.filter(t => !t.completed).slice(0, 4);
   return <div className="lumina-appear">
     <PageHeading eyebrow={formatDate()} title={`${greeting()}, friend.`} description="A clear place to begin. What deserves your attention today?" action={<button data-testid="button-dashboard-add-task" onClick={() => setLocation('/tasks')} className="flex min-h-11 items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:-translate-y-0.5"><Plus size={17} />Add a task</button>} />
+    <section className="mb-5 overflow-hidden rounded-[1.5rem] bg-sidebar text-sidebar-foreground shadow-lg shadow-sidebar/10">
+      <div className="relative flex flex-col items-start gap-5 p-5 sm:flex-row sm:items-center sm:p-6">
+        <div className="absolute -right-12 -top-16 size-40 rounded-full bg-accent/10 blur-3xl" />
+        <LuminaAvatar size={86} className="relative shrink-0 shadow-xl shadow-black/20" />
+        <div className="relative min-w-0 flex-1">
+          <p className="font-mono text-[10px] uppercase tracking-[.22em] text-accent">Meet Lumina</p>
+          <h2 className="mt-1 font-serif text-2xl">Your personal AI companion.</h2>
+          <p className="mt-1 max-w-xl text-sm leading-relaxed text-sidebar-foreground/65">I can help you plan the day, keep your habits close, and find your next clear step.</p>
+        </div>
+        <button data-testid="button-dashboard-ask-lumina" onClick={onOpenChat} className="relative flex min-h-11 shrink-0 items-center gap-2 rounded-xl bg-accent px-4 text-sm font-semibold text-accent-foreground transition hover:-translate-y-0.5">Talk to Lumina <ArrowUpRight size={16} /></button>
+      </div>
+    </section>
     <section className="grid gap-5 lg:grid-cols-[1.4fr_.8fr]">
       <div className="lumina-card relative overflow-hidden rounded-[1.5rem] p-6 md:p-8">
         <div className="absolute right-[-80px] top-[-100px] size-64 rounded-full bg-accent/15 blur-3xl" />
@@ -265,7 +302,7 @@ function ChatPanel({ open, messages, onClose, onSend }: { open: boolean; message
   const [input, setInput] = useState('');
   const send = (text = input) => { if (!text.trim()) return; onSend(text); setInput(''); };
   if (!open) return null;
-  return <div className="fixed bottom-5 right-5 z-50 flex w-[calc(100vw-40px)] max-w-[390px] flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-2xl shadow-sidebar/20 md:bottom-8 md:right-8"><div className="flex items-center justify-between bg-sidebar px-5 py-4 text-sidebar-foreground"><div className="flex items-center gap-3"><span className="grid size-9 place-items-center rounded-xl bg-accent text-primary"><Bot size={18} /></span><div><p className="text-sm font-semibold">Lumina AI</p><p className="font-mono text-[9px] uppercase tracking-widest text-sidebar-foreground/55">local companion</p></div></div><button data-testid="button-close-chat" onClick={onClose} className="grid size-9 place-items-center rounded-lg text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-foreground" aria-label="Close chat"><X size={18} /></button></div><div className="lumina-scrollbar flex max-h-[350px] min-h-[220px] flex-col gap-3 overflow-y-auto bg-background/80 p-4">{messages.map((message, index) => <div key={`${message.role}-${index}`} className={`max-w-[88%] rounded-2xl px-3.5 py-3 text-sm leading-relaxed ${message.role === 'user' ? 'self-end rounded-br-md bg-primary text-primary-foreground' : 'self-start rounded-bl-md bg-muted text-foreground'}`}>{message.content}</div>)}</div><div className="border-t border-border bg-card p-3"><div className="mb-3 flex gap-1.5 overflow-x-auto pb-1">{['Add Task', 'Today’s Tasks', 'My Progress', 'Start Focus', 'Motivate Me'].map(action => <button key={action} data-testid={`button-chat-${action.toLowerCase().replaceAll(' ', '-')}`} onClick={() => send(action === 'Add Task' ? 'add task ' : action)} className="shrink-0 rounded-full border border-border px-2.5 py-1.5 text-[10px] font-semibold text-muted-foreground transition hover:border-primary hover:text-primary">{action}</button>)}</div><div className="flex items-center gap-2 rounded-xl border border-input bg-background px-3"><input data-testid="input-chat-message" value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && send()} placeholder="Ask Lumina anything..." className="h-11 min-w-0 flex-1 bg-transparent text-sm outline-none" /><button data-testid="button-send-chat" onClick={() => send()} className="grid size-8 place-items-center rounded-lg bg-primary text-primary-foreground disabled:opacity-40" disabled={!input.trim()} aria-label="Send message"><Send size={15} /></button></div></div></div>;
+  return <div className="fixed bottom-5 right-5 z-50 flex w-[calc(100vw-40px)] max-w-[390px] flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-2xl shadow-sidebar/20 md:bottom-8 md:right-8"><div className="flex items-center justify-between bg-sidebar px-5 py-4 text-sidebar-foreground"><div className="flex items-center gap-3"><LuminaAvatar size={38} /><div><p className="text-sm font-semibold">Lumina AI</p><p className="font-mono text-[9px] uppercase tracking-widest text-sidebar-foreground/55">local companion</p></div></div><button data-testid="button-close-chat" onClick={onClose} className="grid size-9 place-items-center rounded-lg text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-foreground" aria-label="Close chat"><X size={18} /></button></div><div className="lumina-scrollbar flex max-h-[350px] min-h-[220px] flex-col gap-3 overflow-y-auto bg-background/80 p-4">{messages.map((message, index) => <div key={`${message.role}-${index}`} className={`max-w-[88%] rounded-2xl px-3.5 py-3 text-sm leading-relaxed ${message.role === 'user' ? 'self-end rounded-br-md bg-primary text-primary-foreground' : 'self-start rounded-bl-md bg-muted text-foreground'}`}>{message.content}</div>)}</div><div className="border-t border-border bg-card p-3"><div className="mb-3 flex gap-1.5 overflow-x-auto pb-1">{['Add Task', 'Today’s Tasks', 'My Progress', 'Start Focus', 'Motivate Me'].map(action => <button key={action} data-testid={`button-chat-${action.toLowerCase().replaceAll(' ', '-')}`} onClick={() => send(action === 'Add Task' ? 'add task ' : action)} className="shrink-0 rounded-full border border-border px-2.5 py-1.5 text-[10px] font-semibold text-muted-foreground transition hover:border-primary hover:text-primary">{action}</button>)}</div><div className="flex items-center gap-2 rounded-xl border border-input bg-background px-3"><input data-testid="input-chat-message" value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && send()} placeholder="Ask Lumina anything..." className="h-11 min-w-0 flex-1 bg-transparent text-sm outline-none" /><button data-testid="button-send-chat" onClick={() => send()} className="grid size-8 place-items-center rounded-lg bg-primary text-primary-foreground disabled:opacity-40" disabled={!input.trim()} aria-label="Send message"><Send size={15} /></button></div></div></div>;
 }
 
 function Router() {

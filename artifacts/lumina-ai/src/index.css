@@ -476,3 +476,37 @@
     inset: -1px;
   }
 }
+
+.lumina-avatar {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 999px;
+}
+
+.lumina-avatar svg {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+.lumina-avatar-float {
+  animation: lumina-float 4s ease-in-out infinite;
+}
+
+@keyframes lumina-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lumina-avatar-float {
+    animation: none;
+  }
+}
