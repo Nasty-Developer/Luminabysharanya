@@ -1,44 +1,43 @@
-# [Project name]
+# Lumina AI
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+Lumina AI is a browser-only personal productivity companion for tasks, habits, notes, focus sessions, and a local rule-based assistant.
 
 ## Run & Operate
 
-- `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
+- `pnpm --filter @workspace/lumina-ai run dev` — run the Lumina AI web app
 - `pnpm run typecheck` — full typecheck across all packages
 - `pnpm run build` — typecheck + build all packages
-- `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
-- `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- Required env: `DATABASE_URL` — Postgres connection string
 
 ## Stack
 
 - pnpm workspaces, Node.js 24, TypeScript 5.9
-- API: Express 5
-- DB: PostgreSQL + Drizzle ORM
-- Validation: Zod (`zod/v4`), `drizzle-zod`
-- API codegen: Orval (from OpenAPI spec)
-- Build: esbuild (CJS bundle)
+- Frontend: React + Vite + TypeScript
+- Persistence: browser localStorage
+- Icons: lucide-react
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `artifacts/lumina-ai/src/App.tsx` — app shell, local state, routes, task/habit/note/focus logic, and Lumina assistant
+- `artifacts/lumina-ai/src/index.css` — visual tokens and responsive styling
+- `artifacts/lumina-ai/src/components/` — scaffolded shared UI components
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- The first build is intentionally frontend-only and requires no API keys, auth, database, or external services.
+- All user data is stored in one versioned localStorage record and starts empty for new users.
+- Date rollover and daily streaks use Asia/Kolkata so dashboard, habits, and focus totals agree with the user's local day.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+Dashboard, task list, habit tracker, autosaving quick note, focus/break timer, daily progress summary, resettable settings, and a local keyword-based assistant with live app state.
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+- Keep the product lightweight and browser-only; do not add external AI services or a backend unless explicitly requested.
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- The artifact workflow supplies `PORT` and `BASE_PATH`; use the managed workflow rather than running the root workspace directly.
 
 ## Pointers
 

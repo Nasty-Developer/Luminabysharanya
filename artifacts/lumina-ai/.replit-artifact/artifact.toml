@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Lumina AI"
+description = "A polished browser-only personal productivity companion for managing daily tasks, habits, notes, focus sessions, and a local rule-based assistant."
+version = "1.0.0"
+id = "artifacts/lumina-ai"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 18682
+
+[services.development]
+run = "pnpm --filter @workspace/lumina-ai run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/lumina-ai", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/lumina-ai/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "18682"
+BASE_PATH = "/"
